@@ -77,3 +77,82 @@ exports.logInUser = async (req, res) => {
     return res.status(500).json({ status: false, message: err.message });
   }
 };
+
+
+//// logIn with google ///////////
+exports.signInWithGoogle = async (req, res) => {
+  try {
+    const data = req.body;
+    const { email,
+      //  fcmToken, 
+       name } = data;
+
+    if (!email || !name) {
+      return res
+        .status(400)
+        .json({ status: false, message: "Unable to log in with Google" });
+    }
+
+    // data.isVerified = true;
+
+    let user = await userAuthModel.findOne({ email: email });
+    //bcrypt
+
+    // const hashing = bcrypt.hashSync(fcmToken, 10);
+
+    if (!user) {
+      //   data.fcmToken = hashing;
+
+      user = await userAuthModel.create(data);
+
+      const token = jwt.sign(
+        { _id: user._id},
+        process.env.JWT_SECRET_KEY_USER
+      );
+
+      return res.status(200).json({
+        status: true,
+        message: "User created successfully",
+        data: user,
+        token: token,
+      });
+    }
+
+    // let fcmTokenCompare = await bcrypt.compare(fcmToken, user.fcmToken);
+
+    // if (!fcmTokenCompare)
+    //   return res
+    //     .status(400)
+    //     .send({ status: false, message: "fcmToken is invalid" });
+    // data.fcmToken = hashing;
+
+    const token = jwt.sign(
+      { _id: user._id, },
+      process.env.JWT_SECRET_KEY_USER
+    );
+
+    // await userAuthModel.findByIdAndUpdate(user._id,{fcmToken:data.fcmToken}, { new: true });
+
+    // let updatefcm;
+
+    // if (user.fcmToken) {
+    //   if (fcmToken) {
+    //     await userAuthModel.findByIdAndUpdate(
+    //       user._id,
+    //       { fcmToken: fcmToken },
+    //       { new: true }
+    //     );
+    //   }
+    // }
+    // console.log(updatefcm,"fcmToken Updated Successfully")
+
+    return res.status(200).json({
+      status: true,
+      message: "User updated successfully",
+      data: user,
+      token: token,
+    });
+  } catch (error) {
+    return res.status(500).json({ status: false, message: error.message });
+  }
+};
