@@ -156,3 +156,32 @@ exports.signInWithGoogle = async (req, res) => {
     return res.status(500).json({ status: false, message: error.message });
   }
 };
+
+
+// update 
+
+exports.updateUser = async (req, res) => {
+  try {
+    const data = req.body;
+    const userId = req.user._id;
+
+    if (!userId) {
+      return res.status(400).json({ status: false, message: "UserId is required" });
+    }
+    if(data.name && typeof data.name !== "string"){
+      return res.status(400).json({ status: false, message: "Name should be a string" });
+    }
+
+
+    
+    const user = await userAuthModel.findByIdAndUpdate(userId,{name:data.name} , { new: true });
+
+    if (!user) {
+      return res.status(404).json({ status: false, message: "User not found" });
+    }
+
+    return res.status(200).json({ status: true, message: "User updated successfully", data: user });
+  } catch (error) {
+    return res.status(500).json({ status: false, message: error.message });
+  }
+}

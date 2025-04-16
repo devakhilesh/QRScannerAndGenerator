@@ -1,5 +1,3 @@
-
- 
 require("dotenv/config");
 const mongoose = require("mongoose");
 const cluster = require("cluster");
@@ -27,7 +25,7 @@ if (cluster.isMaster) {
       console.log("MongoDB connected successfully");
     })
     .catch((err) => {
-      console.error(err.message); 
+      console.error(err.message);
     });
 
   const port = process.env.PORT || 3000;
@@ -36,4 +34,3 @@ if (cluster.isMaster) {
     console.log(`Worker ${process.pid} is running on port ${port}`);
   });
 }
-  

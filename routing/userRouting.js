@@ -11,7 +11,6 @@ user.use("/user/auth",uerAuth)
 
 user.use("/user/fileToQr",fileToQrRoute)
 
-
 user.use("/user/textToQr", textToQrRoute)
 
 
