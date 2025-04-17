@@ -74,7 +74,7 @@ exports.destroyProductImages = async (images) => {
   };
 };
 
-// Single Image Upload
+/* // Single Image Upload
 exports.uploadSingleImage = async (image, folderName) => {
   try {
     const result = await new Promise((resolve, reject) => {
@@ -102,6 +102,29 @@ exports.uploadSingleImage = async (image, folderName) => {
     };
   }
 };
+ */
+
+
+exports.uploadSingleImage = async (image, folderName, resourceType = "auto") => {
+  try {
+    const result = await new Promise((resolve, reject) => {
+      cloudinary.uploader.upload_stream(
+        { resource_type: resourceType, folder: folderName },
+        (error, result) => {
+          if (error) reject(error);
+          resolve(result);
+        }
+      ).end(image.data);
+    });
+    return {
+      status: true,
+      data: { public_id: result.public_id, url: result.secure_url },
+    };
+  } catch (error) {
+    return { status: false, message: "Upload failed: " + error.message };
+  }
+};
+
 
 // Single Image Destroy
 exports.deleteSingleImage = async (image) => {

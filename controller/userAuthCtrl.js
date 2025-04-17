@@ -65,27 +65,26 @@ exports.logInUser = async (req, res) => {
 
     const token = jwt.sign({ _id: check._id }, process.env.JWT_SECRET_KEY_USER);
 
-    return res
-      .status(200)
-      .json({
-        status: true,
-        message: "User LogedIn Successfully",
-        data: check,
-        token: token,
-      });
+    return res.status(200).json({
+      status: true,
+      message: "User LogedIn Successfully",
+      data: check,
+      token: token,
+    });
   } catch (err) {
     return res.status(500).json({ status: false, message: err.message });
   }
 };
 
-
 //// logIn with google ///////////
 exports.signInWithGoogle = async (req, res) => {
   try {
     const data = req.body;
-    const { email,
-      //  fcmToken, 
-       name } = data;
+    const {
+      email,
+      //  fcmToken,
+      name,
+    } = data;
 
     if (!email || !name) {
       return res
@@ -106,7 +105,7 @@ exports.signInWithGoogle = async (req, res) => {
       user = await userAuthModel.create(data);
 
       const token = jwt.sign(
-        { _id: user._id},
+        { _id: user._id },
         process.env.JWT_SECRET_KEY_USER
       );
 
@@ -126,10 +125,7 @@ exports.signInWithGoogle = async (req, res) => {
     //     .send({ status: false, message: "fcmToken is invalid" });
     // data.fcmToken = hashing;
 
-    const token = jwt.sign(
-      { _id: user._id, },
-      process.env.JWT_SECRET_KEY_USER
-    );
+    const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET_KEY_USER);
 
     // await userAuthModel.findByIdAndUpdate(user._id,{fcmToken:data.fcmToken}, { new: true });
 
@@ -157,8 +153,7 @@ exports.signInWithGoogle = async (req, res) => {
   }
 };
 
-
-// update 
+// update
 
 exports.updateUser = async (req, res) => {
   try {
@@ -166,22 +161,30 @@ exports.updateUser = async (req, res) => {
     const userId = req.user._id;
 
     if (!userId) {
-      return res.status(400).json({ status: false, message: "UserId is required" });
+      return res
+        .status(400)
+        .json({ status: false, message: "UserId is required" });
     }
-    if(data.name && typeof data.name !== "string"){
-      return res.status(400).json({ status: false, message: "Name should be a string" });
+    if (data.name && typeof data.name !== "string") {
+      return res
+        .status(400)
+        .json({ status: false, message: "Name should be a string" });
     }
 
-
-    
-    const user = await userAuthModel.findByIdAndUpdate(userId,{name:data.name} , { new: true });
+    const user = await userAuthModel.findByIdAndUpdate(
+      userId,
+      { name: data.name },
+      { new: true }
+    );
 
     if (!user) {
       return res.status(404).json({ status: false, message: "User not found" });
     }
 
-    return res.status(200).json({ status: true, message: "User updated successfully", data: user });
+    return res
+      .status(200)
+      .json({ status: true, message: "User updated successfully", data: user });
   } catch (error) {
     return res.status(500).json({ status: false, message: error.message });
   }
-}
+};
